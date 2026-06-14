@@ -1,0 +1,4 @@
+__pycache__/
+*.lock
+*.tmp_*
+bases_os/*_backup_*.xlsx
