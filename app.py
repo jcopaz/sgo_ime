@@ -1637,6 +1637,7 @@ else:
 #endregion
 
 #region SESSÃO 5.2: Carregamento da base operacional
+
 usar_sim = st.session_state.get("chk_sim", False)
 qtd_sim = st.session_state.get("qtd_sim", 1200)
 seed_sim = st.session_state.get("seed_sim", 42)
@@ -1658,9 +1659,11 @@ df_base_bruto = carregar_base_sem_overlay(
     ),
 )
 
+# ✅ CORREÇÃO DO CAMINHO PARA AMBIENTE CLOUD
+pasta_bases = Path(__file__).parent / "bases_os"
+
 if df_base_bruto.empty and not usar_sim:
-    pasta_bases = Path(__file__).parent / "bases_os"
-    st.error(f"Nenhuma planilha encontrada na pasta '{pasta_bases.absolute()}'.")
+    st.error(f"Nenhuma planilha encontrada na pasta '{pasta_bases}'.")
     st.stop()
 
 df_base = aplicar_overlay_baixas(
@@ -1670,7 +1673,9 @@ df_base = aplicar_overlay_baixas(
 )
 
 st.session_state["df_os"] = df_base
+
 df_visao = preparar_df_visao(df_base, filtro_visao)
+
 #endregion
 
 #region SESSÃO 5.3: Filtros da sidebar
