@@ -10,3 +10,7 @@ streamlit-echarts
 openpyxl
 reportlab
 streamlit-calendar
+networkx
+streamlit-folium
+supabase
+haversine
