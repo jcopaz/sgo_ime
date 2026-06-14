@@ -1250,6 +1250,9 @@ def carregar_base_sem_overlay(
     pesos_criticidade_sim: tuple,
 ) -> pd.DataFrame:
 
+    # ==============================
+    # 1. Simulação (sem mudança)
+    # ==============================
     if usar_sim:
         pesos_dict = {
             "1-Muito Alta": pesos_criticidade_sim[0],
@@ -1264,31 +1267,46 @@ def carregar_base_sem_overlay(
             pesos_criticidade=pesos_dict,
         )
 
-    # ✅ CORREÇÃO AQUI (ESSENCIAL)
-    pasta_bases = Path(__file__).parent / "bases_os"
-    pasta_bases.mkdir(exist_ok=True)
+    # ==============================
+    # 2. Caminho da RAIZ do projeto
+    # ==============================
+    pasta_projeto = Path(__file__).parent
 
-    arquivos = [f for f in pasta_bases.glob("*.xlsx") if not f.name.startswith("~$")]
+    # ✅ Agora busca direto na raiz
+    arquivos = [
+        f for f in pasta_projeto.glob("OS_*.xlsx")
+        if f.is_file() and not f.name.startswith("~$")
+    ]
 
+    # ==============================
+    # 3. Validação
+    # ==============================
     if not arquivos:
         return pd.DataFrame()
 
+    # ==============================
+    # 4. Leitura dos arquivos
+    # ==============================
     dfs = []
     for arq in arquivos:
         df_temp = carregar_excel_por_path(str(arq), etl_version)
+
         nome_coord = arq.stem.replace("OS_", "").replace("_", " ").strip()
         df_temp["Coordenacao"] = nome_coord
+
         dfs.append(df_temp)
 
     df_base_bruto = pd.concat(dfs, ignore_index=True)
 
+    # ==============================
+    # 5. Filtro por escopo
+    # ==============================
     if escopo_usuario != "Todas":
         df_base_bruto = df_base_bruto[
             df_base_bruto["Coordenacao"].str.contains(escopo_usuario, case=False, na=False)
         ]
 
     return df_base_bruto
-
 
 @st.cache_data(show_spinner=False)
 def aplicar_overlay_baixas(
@@ -1663,10 +1681,10 @@ df_base_bruto = carregar_base_sem_overlay(
 )
 
 # ✅ CORREÇÃO DO CAMINHO PARA AMBIENTE CLOUD
-pasta_bases = Path(__file__).parent / "bases_os"
+pasta_projeto = Path(__file__).parent
 
 if df_base_bruto.empty and not usar_sim:
-    st.error(f"Nenhuma planilha encontrada na pasta '{pasta_bases}'.")
+    st.error(f"Nenhuma planilha OS_*.xlsx encontrada na pasta '{pasta_projeto}'.")
     st.stop()
 
 df_base = aplicar_overlay_baixas(
