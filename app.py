@@ -1249,6 +1249,7 @@ def carregar_base_sem_overlay(
     pct_pendente_sim: int,
     pesos_criticidade_sim: tuple,
 ) -> pd.DataFrame:
+
     if usar_sim:
         pesos_dict = {
             "1-Muito Alta": pesos_criticidade_sim[0],
@@ -1263,10 +1264,12 @@ def carregar_base_sem_overlay(
             pesos_criticidade=pesos_dict,
         )
 
+    # ✅ CORREÇÃO AQUI (ESSENCIAL)
     pasta_bases = Path(__file__).parent / "bases_os"
     pasta_bases.mkdir(exist_ok=True)
 
     arquivos = [f for f in pasta_bases.glob("*.xlsx") if not f.name.startswith("~$")]
+
     if not arquivos:
         return pd.DataFrame()
 
