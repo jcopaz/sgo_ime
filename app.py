@@ -1263,7 +1263,7 @@ def carregar_base_sem_overlay(
             pesos_criticidade=pesos_dict,
         )
 
-    pasta_bases = Path("bases_os")
+    pasta_bases = Path(__file__).parent / "bases_os"
     pasta_bases.mkdir(exist_ok=True)
 
     arquivos = [f for f in pasta_bases.glob("*.xlsx") if not f.name.startswith("~$")]
@@ -1659,7 +1659,7 @@ df_base_bruto = carregar_base_sem_overlay(
 )
 
 if df_base_bruto.empty and not usar_sim:
-    pasta_bases = Path("bases_os")
+    pasta_bases = Path(__file__).parent / "bases_os"
     st.error(f"Nenhuma planilha encontrada na pasta '{pasta_bases.absolute()}'.")
     st.stop()
 
