@@ -14,3 +14,4 @@ networkx
 streamlit-folium
 supabase
 haversine
+matplotlib
